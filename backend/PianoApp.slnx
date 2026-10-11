@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="PianoApp.Api/PianoApp.Api.csproj" />
+  <Project Path="PianoApp.Tests/PianoApp.Tests.csproj" />
+</Solution>
