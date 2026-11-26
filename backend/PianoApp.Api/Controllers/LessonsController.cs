@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using PianoApp.Api.Models;
-using PianoApp.Api.Services;
+using PianoApp.Api.DTOs;
 using PianoApp.Api.Interfaces;
-using Microsoft.Extensions.Options;
-using PianoApp.Api.Options;
 
 namespace PianoApp.Api.Controllers;
 
@@ -12,46 +9,28 @@ namespace PianoApp.Api.Controllers;
 public class LessonsController : ControllerBase
 {
     private readonly ILessonService _lessonService;
-    private readonly ILogger<LessonsController> _logger;
-    private readonly PianoAppOptions _options;
 
-    public LessonsController(
-        ILessonService lessonService,
-        ILogger<LessonsController> logger,
-        IOptions<PianoAppOptions> options)
+    public LessonsController(ILessonService lessonService)
     {
         _lessonService = lessonService;
-        _logger = logger;
-        _options = options.Value;
     }
 
     [HttpGet]
-    public IEnumerable<Lesson> Get()
+    public async Task<ActionResult<IEnumerable<LessonDto>>> Get()
     {
-        _logger.LogInformation(
-            "{ApplicationName}: Retrieving lessons. Configured page size: {PageSize}",
-            _options.ApplicationName,
-            _options.LessonsPerPage
-        );
-
-        return _lessonService.GetAllLessons();
+        var lessons = await _lessonService.GetAllLessonsAsync();
+        return Ok(lessons);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Lesson> GetById(int id)
+    public async Task<ActionResult<LessonDto>> GetById(int id)
     {
-        _logger.LogInformation("Retrieving lesson with ID {LessonId}", id);
+        var lesson = await _lessonService.GetLessonByIdAsync(id);
 
-        var lesson = _lessonService.GetLessonById(id);
-
-        if (lesson is null)
+        if (lesson == null)
         {
-            _logger.LogWarning("Lesson {LessonId} was not found", id);
-
             return NotFound();
         }
-
-        _logger.LogInformation("Successfully retrieved lesson {LessonId}", id);
 
         return Ok(lesson);
     }
