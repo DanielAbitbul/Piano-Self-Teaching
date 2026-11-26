@@ -1,10 +1,10 @@
-using PianoApp.Api.Models;
+using PianoApp.Api.DTOs;
 
 namespace PianoApp.Api.Interfaces;
 
 public interface ILessonService
 {
-    IEnumerable<Lesson> GetAllLessons();
-
-    Lesson? GetLessonById(int id);
+    Task<List<LessonDto>> GetAllLessonsAsync();
+    Task<LessonDto?> GetLessonByIdAsync(int id);
+    Task<List<LessonDto>> GetLessonsByCourseIdAsync(int courseId);
 }
